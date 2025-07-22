@@ -13,9 +13,9 @@ Automation tools for node provisioning.
 
 ## Chapter I
 
-When deploying an application on some node, whether it is a production or a test bed, it is necessary to prepare the machine itself for the deployment of the application. As you already know, the docker image already contains all the necessary dependencies to run the application, but there are still a number of parameters that require additional configuration or provisioning. First it can be the installation of packages and tools (such as docker itself or git), or it can be an additional configuration, which depends on the node, the migration of files, etc. Exactly to solve such problems, many tools for automating remote machine configuration have been created, one of which is **Ansible**.
+When deploying an application on a node, whether in production or in a test environment, the machine itself must be prepared for the deployment. As you know, the Docker image contains all the necessary dependencies to run the application. However, there are still a number of parameters that require additional configuration or provisioning. These can include installing packages and tools (such as Docker itself or Git) or additional configurations depending on the node, migration of files, etc. Many tools have been created to automate remote machine configuration, one of which is **Ansible**.
 
-In the world of modern web applications it often turns out that a service that is available at one ip address was, for example, moved to another. In this case, the most acute problem is the manual reconfiguration of the communication channels of various application subsystems, allocated into separate services. This problem is solved by **Consul** performing *Service Discovery*, which allows you to automate the process of configuring communication channels.
+In the world of modern web applications, it often happens that a service available at one IP address is moved to another. The most pressing problem in this case is manually reconfiguring the communication channels of various application subsystems that are allocated into separate services. **Consul** solves this problem by performing *Service Discovery*, which automates the process of configuring communication channels.
 
 ## Chapter II
 
@@ -25,77 +25,76 @@ The result of the work must be a report with detailed descriptions of the implem
 
 In this chapter you will perform a remote node configuration to deploy a multiservice application.
 
-**== Task ==**
+### Task
 
-1) Create three machines using Vagrant - manager, node01, node02. Do not install docker using shell scripts when creating machines on Vagrant! Forward the node01 ports to the local machine to access the undeployed microservice application.
+1. Using Vagrant, create three machines: manager, node01, and node02. Do not install Docker using shell scripts when creating machines on Vagrant. Forward the Node 01 ports to the local machine to access the undeployed microservice application.
 
-2) Prepare manager as a workstation for remote configuration (help on Ansible is in the materials).
-- Go to manager. 
-- Check the connection to node01 via ssh on a private network. 
-- Generate a ssh key to connect to node01 from the manager (without passphrase). 
-- Copy the docker-compose file and the source code of the microservices to the manager. (Use the project from the src folder and the docker-compose file from the previous chapter. Help on ssh is in the materials.)
-- Install Ansible on the manager and create ansible folder in which create the inventory file. 
-- Use the ping module to check the connection via Ansible. 
-- Place the result of the module in a report.
+2. Prepare the manager machine for remote configuration using Ansible (help is included in the materials).
+   - Go to the manager.
+   - Check the connection to node01 via SSH on a private network.
+   - Generate an SSH key to connect to node01 from the manager without a passphrase.
+   - Copy the Docker Compose file and the microservice source code to the manager. Use the project from the src folder and the Docker Compose file from the previous chapter. Help on SSH is included in the materials.
+   - Install Ansible on the manager and create an Ansible folder in which to create the inventory file.
+   - Use the ping module to check the connection via Ansible.
+   - Place the result of the module in a report.
 
-3) Write the first playbook for Ansible that performs apt update, installs docker, docker-compose, copies the compose file from the manager and deploys the microservice application. 
+3. Write the first Ansible playbook that performs an apt update, installs Docker and Docker Compose, copies the Compose file from the manager, and deploys the microservice application.
 
-4) Run the prepared tests through postman and make sure that they are all successful. Show the test results in the report.
+4. Run the prepared tests through Postman and ensure they are all successful. Show the test results in the report.
 
-5) Form three roles: 
- - the application role performs the deployment of a microservice application using docker-compose,
- - apache installs and runs the standard apache server
- - postgres installs and runs postgres, creates a database with an arbitrary table and adds three arbitrary records to it. 
- - Assign the first role to node01 and the second two roles to node02, check the functionality of the microservices application with postman tests, make sure that postgres and the apache server are available. For Apache, a web page should open in the browser. As for PostgreSQL, you need to connect from the local machine and display the contents of the previously created table with data.
+5. Form three roles:
+   - The application role deploys a microservice application using Docker Compose;
+   - Apache installs and runs the standard Apache server;
+   - Postgres installs and runs Postgres, creates a database with an arbitrary table, and adds three arbitrary records to it.
+   - Assign the first role to node01, and assign the second two roles to node02. Check the functionality of the microservice application using Postman tests. Make sure that PostgreSQL and the Apache server are available. For Apache, a web page should open in the browser. For PostgreSQL, connect from the local machine and display the contents of the previously created table with data.
 
-6) Place the files created in this part in the `src\ansible01` folder in your personal repository.
+6. Place the files created in this section into the `src\ansible01` folder in your personal repository.
 
 ## Part 2. Service Discovery
 
-Now let's move on to Service Discovery. In this chapter, you will simulate two remote services, an api and a database, and make a connection between them through Service Discovery using Consul.
+Now, let's move on to service discovery. In this chapter, you will simulate two remote services—an API and a database—and establish a connection between them using Consul's Service Discovery.
 
-**== Task ==**
+### Task
 
-1) Write two configuration files for consul (information on consul is in the materials):
-- consul_server.hcl:
-   - set up the agent as a server;
-   - specify the interface directed to the internal Vagrant network in advertise_addr
-- consul_client.hcl:
-   - set up the agent as a client;
-   - specify the interface directed to the internal Vagrant network in advertise_addr 
+1. Write two configuration files for Consul (information on Consul can be found in the materials):
+   - consul_server.hcl:
+      - sets up the agent as a server;
+      - specifies the interface directed to the internal Vagrant network in advertise_addr;
+   - consul_client.hcl:
+      - sets up the agent as a client;
+      - specifies the interface directed to the internal Vagrant network in advertise_addr.
 
+2. Create three machines using Vagrant: consul_server, api, manager, and db.
+   - Forward port 8082 from the API to the local machine to access the still undeployed API.
+   - Forward port 8500 with the manager to access the UI Consul.
 
-2) Create three machines using Vagrant - consul_server, api, manager and db. 
-- Forward port 8082 from the api to the local machine to access the still undeployed api
-- Forward port 8500 with the manager to access the ui consul. 
+3. Write a playbook for Ansible and four roles:
+   - install_consul_server:
+      - works with consul_server;
+      - copies consul_server.hcl;
+      - installs Consul and all necessary dependencies;
+      - runs the Consul service.
+   - install_consul_client:
+      - works with the API and database;
+      - copies consul_client.hcl;
+      - installs Consul and Envoy, as well as all necessary dependencies for Consul;
+      - runs the Consul and Consul-Envoy services.
+   - install_db:
+      - works with the database;
+      - installs PostgreSQL and runs it;
+      - creates the `hotels_db` database.
+   - install_hotels_service:
+      - works with the API;
+      - copies the service source code;
+      - installs `openjdk-8-jdk`.
+      - creates global environment variables:
+         - POSTGRES_HOST="127.0.0.1";
+         - POSTGRES_PORT="5432";
+         - POSTGRES_DB="hotels_db";
+         - POSTGRES_USER="<user name>";
+         - POSTGRES_PASSWORD="<user password>";
+      - runs the built JAR file with the command: `java -jar <path to hotel-service>/hotel-service/target/<jar file name>.jar`.
 
-3) Write a playbook for ansible and four roles: 
-- install_consul_server, which:
-   - works with consul_server;
-   - copies consul_server.hcl;
-   - installs consul and all necessary dependencies for it;
-   - runs consul service
-- install_consul_client, which:
-   - works with api and db;
-   - copies consul_client.hcl;
-   - installs consul, envoy all necessary dependencies for consul; 
-   - runs consul and consul-envoy services;
-- install_db, which:
-   - works with db;
-   - installs postgres and runs it;
-   - creates `hotels_db` database;
-- install_hotels_service, which:
-   - works with api;
-   - copies the service source code
-   - installs `openjdk-8-jdk`
-   - Creates global environment variables:
-      - POSTGRES_HOST="127.0.0.1"
-      - POSTGRES_PORT="5432"
-      - POSTGRES_DB="hotels_db"
-      - POSTGRES_USER="<user name>"
-      - POSTGRES_PASSWORD="<user password>"
-   - runs the built jar file with the command: `java -jar <path to hotel-service>/hotel-service/target/<jar file name>.jar`
+4. Check the functionality of CRUD operations on the hotel service. Show the test results in the report.
 
-4) Check the functionality of CRUD operations on hotel service. Show the test results in the report.
-
-5) Place the files created in this part in the `src\ansible02` and `src\consul01` folders in your personal repository.
+5. Place the files created in this part in the `src\ansible02` and `src\consul01` folders in your personal repository.

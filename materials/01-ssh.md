@@ -1,20 +1,14 @@
 # SSH
 
+**SSH (Secure Shell)** is a secure application-layer protocol used to connect to a remote machine. It is the primary method of connecting remotely to Unix-like computers.
 
-SSH (Secure shell) is a secure application layer protocol for connecting to a remote machine. SSH is the main way to connect remotely to Unix-like computers.
+There are two approaches to connecting to a machine via SSH:
 
+1. Direct connection via password.
+2. Private key connection.
 
-In order to connect to a machine via SSH, you can use two approaches:
+To connect via password, enter the command `ssh <ip address of remote machine>`, then enter the password in the dialog box. The connection is now established. When the connection is first established, the connecting host receives a unique fingerprint for identification purposes. Once connected, the user has access to the shell console on the remote machine in their terminal.
 
+*Note: virtual machines may disable password connections by default. Check the `/etc/ssh/sshd_config` file for the `PasswordAuthentication yes` line. If necessary, run the `service sshd restart` command to make changes to the configuration. The default password is usually "vagrant"*.
 
-1. Direct connection via password
-2. Private key connection
-
-
-To connect via password, simply enter the command `ssh <ip address of remote machine> ` then enter the password in the dialog box. The connection is established. When the connection is first established, the connecting host will receive a unique fingerprint for identification. Once connected, the user has access to the shell console on the remote machine inside his terminal.
-
-
-*Note: Virtual machines may have the password connection disabled by default, so check the `/etc/ssh/sshd_config` file for the `PasswordAuthentication yes` line and `service sshd restart` if necessary to make changes to the config. The default password is usually vagrant.*
-
-
-To connect by key, you must first create a private and public key pair `ssh-keygen -C <comment>` with the path to the file with the private key and a possible passphrase. The private key is a secret, and the public key (with the added extension .pub) must be sent to the machine to which it will connect with the command `ssh-copy-id -i <path to the file with the public key> <ip address of the remote host>`. After this, the system will ask for a connection password which must be entered once and from that moment the private key will be used in the default connection via the command `ssh <ip address of the remote machine>`.
+To connect by key, first create a private and public key pair `ssh-keygen -C <comment>` specifying the path to the file with the private key and a possible passphrase. The private key is secret, and the public key (.pub extension) must be sent to the connecting machine with the command: `ssh-copy-id -i <path to the file with the public key> <ip address of the remote host>`. The system will then prompt you for a connection password, which you will only need to enter once. From that point on, the private key will be used for the default connection via the command `ssh <ip address of the remote machine>`.
