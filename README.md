@@ -66,7 +66,7 @@ Now, let's move on to service discovery. In this chapter, you will simulate two 
 
 2. Create three machines using Vagrant: consul_server, api, manager, and db.
    - Forward port 8082 from the API to the local machine to access the still undeployed API.
-   - Forward port 8500 with the manager to access the UI Consul.
+   - Forward port 8500 with the consul_server to access the UI Consul.
 
 3. Write a playbook for Ansible and four roles:
    - install_consul_server:

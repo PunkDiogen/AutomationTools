@@ -66,7 +66,7 @@
 
 2. Создать с помощью Vagrant четыре машины: consul_server, api, manager и db.
    - Прокинуть порт 8082 с api на локальную машину для доступа к пока еще не развернутому api.
-   - Прокинуть порт 8500 с manager для доступа к ui consul. 
+   - Прокинуть порт 8500 с consul_server для доступа к ui consul. 
 
 3. Написать плейбук для ansible и четыре роли: 
    - install_consul_server, которая:
