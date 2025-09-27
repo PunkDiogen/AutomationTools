@@ -1,0 +1,55 @@
+---
+# tasks file for install_db
+
+- name: install postgres
+  apt:
+    name:
+      - postgresql
+      - postgresql-contrib
+      - libpq-dev
+      - python3-psycopg2
+    state: present
+    update_cache: yes
+
+- name: start postgres
+  service:
+    name: postgresql
+    state: started
+    enabled: yes
+
+- name: Set password for postgres user
+  command: sudo -u "{{postgres_admin_u}}" psql -c "ALTER USER postgres WITH PASSWORD '{{postgres_admin_pw}}'"
+
+- name: create db
+  postgresql_db:
+    name: "{{db_name}}"
+    encoding: UTF-8
+    lc_collate: "en_US.utf8"
+    lc_ctype: "en_US.utf8"
+    template: template0
+    state: present
+    login_user: "{{postgres_admin_u}}"
+    login_password: "{{postgres_admin_pw}}"
+    login_host: "localhost"
+
+- name: create user
+  postgresql_user:
+    name: "{{user}}"
+    password: "{{user_pw}}"
+    login_db: "{{db_name}}"
+    role_attr_flags: "LOGIN,CREATEDB"
+    login_user: "{{postgres_admin_u}}"
+    login_password: "{{postgres_admin_pw}}"
+    login_host: "localhost"
+    state: present
+
+- name: Configure md5 authentication for TCP
+  become: true
+  lineinfile:
+    path: /etc/postgresql/12/main/pg_hba.conf
+    line: 'host    all             postgres          127.0.0.1/32            md5'
+    state: present
+  notify: restart postgres
+
+
+

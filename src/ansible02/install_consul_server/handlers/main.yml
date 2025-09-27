@@ -1,0 +1,5 @@
+---
+# handlers file for install_consul_server
+- name: reload systemd
+  systemd:
+    daemon_reload: yes

@@ -250,7 +250,7 @@
 		},
 		{
 			"key": "API_HOST",
-			"value": "localhost",
+			"value": "192.168.56.11",
 			"type": "default"
 		},
 		{

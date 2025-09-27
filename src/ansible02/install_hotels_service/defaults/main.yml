@@ -1,0 +1,7 @@
+---
+# defaults file for install_hotels_service
+app_dir: "/home/vagrant/hotel_service"
+file_name: "hotel-service-0.0.1-SNAPSHOT"
+db_name: "hotels_db"
+user: "punkdiogen"
+user_pw: "p1!un8kDIO5gEn4"

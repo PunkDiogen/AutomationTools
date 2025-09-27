@@ -1,0 +1,22 @@
+- name: start Consul server
+  hosts: consul_server
+  become: yes
+  roles: 
+    - install_consul_server
+  tags: consul_s
+
+- name: install db and run with consul client
+  hosts: db
+  become: yes
+  roles:
+    - install_db
+    - install_consul_client
+  tags: db
+
+- name: instal api and run with consul client
+  hosts: api
+  become: yes
+  roles:
+    - install_consul_client
+    - install_hotels_service
+  tags: api

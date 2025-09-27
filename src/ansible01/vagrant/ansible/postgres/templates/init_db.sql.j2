@@ -1,0 +1,18 @@
+CREATE TABLE IF NOT EXISTS {{ table_name }} (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    age INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+{% for item in sample_date %}
+INSERT INTO {{ table_name }} (name, age, email)
+VALUES ('{{ item.name }}', {{ item.age }}, '{{ item.email }}')
+ON CONFLICT (email) DO NOTHING;
+{% endfor %}
+
+CREATE INDEX IF NOT EXISTS idx_{{ table_name }}_email ON {{ table_name }}(email);
+
+GRANT ALL PRIVILEGES ON TABLE {{ table_name }} TO {{ user }};
+GRANT ALL PRIVILEGES ON SEQUENCE {{ table_name }}_id_seq TO {{ user }};

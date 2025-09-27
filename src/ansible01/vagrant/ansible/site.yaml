@@ -1,0 +1,15 @@
+- name: Deploy services
+  hosts: node01
+  gather_facts: false
+  become: yes
+  roles: 
+    - application
+
+- name: install apache & postgresql
+  tags: postgres
+  hosts: node02
+  gather_facts: false
+  become: yes
+  roles:
+    - apache
+    - postgres

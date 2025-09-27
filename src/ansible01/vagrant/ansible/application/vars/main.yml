@@ -1,0 +1,3 @@
+---
+# vars file for application
+    deploy_dir: /home/vagrant/my_app

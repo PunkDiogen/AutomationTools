@@ -1,0 +1,21 @@
+---
+# defaults file for postgres
+postgres_admin_u: "postgres"
+postgres_admin_pw: "postgres_password" 
+db_name: "my_db"
+user: "punkdiogen"
+user_pw: "p1!un8kDIO5gEn4"
+
+table_name: "users"
+sample_date:
+  - name: "Сахаров Михаил"
+    age: "35"
+    email: "punkdiogen@inbox.ru"
+
+  - name: "Сахарова Лилия"
+    age: "34" 
+    email: "lilyaSakh@gmail.com"
+
+  - name: "Сахаров Марк"
+    age: "4"
+    email: "none"

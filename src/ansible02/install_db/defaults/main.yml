@@ -1,0 +1,7 @@
+---
+# defaults file for install_db
+postgres_admin_u: "postgres"
+postgres_admin_pw: "postgres_password" 
+db_name: "hotels_db"
+user: "punkdiogen"
+user_pw: "p1!un8kDIO5gEn4"

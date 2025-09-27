@@ -1,0 +1,27 @@
+#hotel service
+
+[Unit]
+Description=Hotel Service
+
+[Service]
+Type=simple
+User=vagrant
+Group=vagrant
+WorkingDirectory={{ app_dir }}
+
+Environment=POSTGRES_HOST=127.0.0.1
+Environment=POSTGRES_PORT=5432
+Environment=POSTGRES_DB={{ db_name }}
+Environment=POSTGRES_USER={{ user }}
+Environment=POSTGRES_PASSWORD={{ user_pw }}
+ExecStart=/usr/bin/java -jar {{ app_dir }}/target/{{ file_name }}.jar
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=10s
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hotel-service
+
+[Install]
+WantedBy=multi-user.target

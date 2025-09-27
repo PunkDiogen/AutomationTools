@@ -1,0 +1,52 @@
+---
+# tasks file for install_hotels_service
+- name: Update package
+  apt:
+    update_cache: yes
+
+- name: install JDK
+  apt:
+    name: openjdk-8-jdk
+    state: present
+
+- name: install Maven
+  apt:
+    name: maven
+    state: present
+  
+- name: Create app dir
+  file:
+    path: "{{app_dir}}"
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: 0755
+
+- name: Copy service
+  copy:
+    src: hotel-service/
+    dest: "{{app_dir}}"
+    owner: vagrant
+    group: vagrant
+    mode: 0755
+
+- name: build jar
+  command: mvn clean package -DskipTests
+  args:
+    chdir: "{{app_dir}}"
+    creates: "{{app_dir}}/target/{{file_name}}.jar"
+   
+- name: Deploy hotel service
+  template:
+    src: hotel.service.j2
+    dest: /etc/systemd/system/hotel.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload systemd
+
+- name: Enable and start hotel service
+  systemd:
+    name: hotel
+    state: started
+    enabled: yes

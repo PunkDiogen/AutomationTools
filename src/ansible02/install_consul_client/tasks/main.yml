@@ -1,0 +1,91 @@
+---
+# tasks file for install_consul_client
+
+- name: create Consul group
+  group:
+    name: consul
+    system: yes
+    state: present
+
+- name: Create Consul user
+  user:
+    name: consul
+    group: consul
+    shell: /bin/false
+    state: present
+
+- name: Create config directory
+  file:
+    path: "/etc/consul.d"
+    state: directory
+    owner: consul
+    group: consul
+    mode: 0750
+
+- name: Create Consul data dir
+  file:
+    path: "/opt/consul/data"
+    state: directory
+    owner: consul
+    group: consul
+    mode: 0755
+
+- name: service name
+  set_fact:
+    service_name: "{{ 'api-service' if 'api_groupe' in group_names else 'db-service' }}"
+
+- name: Copy config
+  copy:
+    src: "{{ 'consul_client_api.hcl' if 'api_groupe' in group_names else 'consul_client_db.hcl' }}"
+    dest: "/etc/consul.d/consul.hcl"
+    
+- name: Copy consul bin
+  copy:
+    src: consul
+    dest: "/usr/local/bin/consul"
+    mode: "0755"
+
+- name: Copy envoy bin
+  copy:
+    src: envoy-1.35.3-linux-x86_64
+    dest: "/usr/local/bin/envoy-1.35.3-linux-x86_64"
+    mode: "0755"
+
+- name: Installing dependencies
+  apt:
+    name:
+      - curl
+      - unzip
+      - gnupg
+      - software-properties-common
+    state: present
+
+- name: Deploy consul service
+  template:
+    src: consul.service.j2
+    dest: /etc/systemd/system/consul.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload systemd
+
+- name: Enable and start consul service
+  systemd:
+    name: consul
+    state: started
+    enabled: yes
+
+- name: Deploy envoy service
+  template:
+    src: consul.envoy.j2
+    dest: /etc/systemd/system/envoy.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload systemd
+
+- name: Enable and start envoy service
+  systemd:
+    name: envoy
+    state: started
+    enabled: yes

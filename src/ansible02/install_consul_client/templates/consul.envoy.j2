@@ -1,0 +1,20 @@
+#consul envoy
+
+[Unit]
+Description=Envoy service
+Documentation=https://www.consul.io/docs/connect/proxies/envoy
+After=consul.service
+
+[Service]
+Type=simple
+ExecStart= /usr/local/bin/consul connect envoy -sidecar-for {{service_name}} -envoy-binary /usr/local/bin/envoy-1.35.3-linux-x86_64 -ignore-envoy-compatibility
+Restart=on-failure
+RestartSec=10s
+User=consul
+Group=consul
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

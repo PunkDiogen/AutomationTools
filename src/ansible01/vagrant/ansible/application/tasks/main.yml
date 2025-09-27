@@ -1,0 +1,32 @@
+---
+# tasks file for application
+
+- name: Create directory
+  file:
+    path: /home/vagrant/my_app/
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: "0755"
+
+- name: Cope services
+  copy:
+    src: "services/"
+    dest: "{{deploy_dir}}/services"
+    owner: vagrant
+    group: vagrant
+    mode: '0755' 
+
+- name: copy compose file
+  copy:
+    src: "docker-compose.yaml"
+    dest: "{{deploy_dir}}/docker-compose.yaml"
+    owner: vagrant
+    group: vagrant
+
+- name: Deploy
+  community.docker.docker_compose_v2:
+    project_src: "{{deploy_dir}}"
+    build: always
+    state: present
+    recreate: always
